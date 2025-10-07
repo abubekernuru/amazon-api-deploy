@@ -18,7 +18,7 @@ app.post("/payments/create", async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: total, // amount in cents
+      amount: total, 
       currency: "usd",
     });
 
@@ -31,4 +31,22 @@ app.post("/payments/create", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("✅ Server running on port 5000"));
+// Add a root route for health checks
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Amazon API Server is running!",
+    status: "active",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Add health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
+// Use Render's PORT environment variable and bind to 0.0.0.0
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
